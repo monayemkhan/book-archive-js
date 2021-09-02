@@ -1,51 +1,61 @@
-
+// Get the Elements 
 const errorDiv = document.getElementById("error");
 const spinner = document.getElementById("spinner");
+const filterData = document.getElementById("found-result");
 
-// 
+
+// Search the results 
 const searchBook = () => {
     const searchField = document.getElementById('search-field');
     const searchText = searchField.value;
-
+    // clare input field 
     searchField.value = '';
-
+    // error input field
     if (searchText === "") {
-        errorDiv.innerText = "Search field cannot be empty!";
+        errorDiv.innerText = "Search field can't be empty!";
         return;
     }
 
+    // book search link 
     const url = `https://openlibrary.org/search.json?q=${searchText}`;
-  
+    // spinner remove data
+    spinner.classList.remove("d-none");
     fetch(url)
     .then(res => res.json())
     .then((data) => {
-    // spinnner and showing data
+    // spinner and showing data
         setTimeout(() => {
           spinner.classList.add("d-none");
-          displaySearchResult(data.docs);
+          displaySearchResult(data);
         },
         1000);
     })
-
     .finally(() => {
         searchField.value = "";
     });
 
 }
 
-
-const displaySearchResult = docs => {
+//show the books results
+const displaySearchResult = books => {
     const searchResult = document.getElementById('search-result');
     searchResult.textContent = '';
 
-    if (docs.length === 0 ) {
-        errorDiv.innerText = "No Search Result Found!";
-      } else {
+    // get result found
+    if (books.docs.length === 0) {
+        errorDiv.innerText = "No Search Result Found";
+    } else if(books.docs.length >= 30) {
         errorDiv.innerText = "";
+        books.docs.length = 30;
+        filterData.innerText = `Showing ${books.docs.length} results of ${books.numFound}`
+    }else if(books.docs.length <= 30)  {
+        errorDiv.innerText = "";
+        filterData.innerText = `Showing ${books.docs.length} results of ${books.numFound}`
     }
 
-    docs.forEach(book => {
-    //Author Check 
+    // forEach the arry of results 
+    books.docs.forEach(book => {
+    //Author valid Check 
     const isValid = validCheck => {
         if (validCheck !== undefined) {
             return validCheck;
@@ -55,6 +65,7 @@ const displaySearchResult = docs => {
         }
     }
     
+    // create search result div
     const div = document.createElement('div');
     div.classList.add('col');
     div.innerHTML = `
