@@ -40,7 +40,7 @@ const searchBook = () => {
 const displaySearchResult = books => {
     const searchResult = document.getElementById('search-result');
     searchResult.textContent = '';
-
+    filterData.innerText = "";
     // get result found
     if (books.docs.length === 0) {
         errorDiv.innerText = "No Search Result Found";
